@@ -181,17 +181,22 @@
             min-height: 120px;
         }
 
-        .services-grid {
+        /* Services Grid & Venue Grid */
+        .services-grid, .venue-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 14px;
         }
 
-        @media(max-width: 600px) {
-            .services-grid { grid-template-columns: 1fr; }
+        .venue-grid {
+            grid-template-columns: 1fr 1fr 1fr;
         }
 
-        .service-card {
+        @media(max-width: 600px) {
+            .services-grid, .venue-grid { grid-template-columns: 1fr; }
+        }
+
+        .service-card, .venue-card {
             position: relative;
             background: var(--input-bg);
             border: 1px solid var(--border-color);
@@ -204,7 +209,13 @@
             justify-content: flex-start;
         }
 
-        .service-card:hover {
+        .venue-card {
+            align-items: center;
+            text-align: center;
+            padding: 16px 12px;
+        }
+
+        .service-card:hover, .venue-card:hover {
             border-color: var(--maroon);
             transform: translateY(-2px);
         }
@@ -219,26 +230,35 @@
             cursor: pointer;
         }
 
-        .service-title {
+        .venue-card input[type="radio"] {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            accent-color: var(--maroon);
+            cursor: pointer;
+        }
+
+        .service-title, .venue-title {
             font-size: 15px;
             font-weight: 600;
             color: var(--text-main);
             margin-bottom: 6px;
-            padding-right: 24px;
         }
 
-        .service-desc {
+        .service-title { padding-right: 24px; }
+
+        .service-desc, .venue-desc {
             font-size: 13px;
             color: var(--text-muted);
             line-height: 1.4;
         }
 
-        .service-card.selected {
+        .service-card.selected, .venue-card.selected {
             background: var(--maroon-light);
             border-color: var(--maroon);
         }
 
-        .service-card.selected .service-title {
+        .service-card.selected .service-title, .venue-card.selected .venue-title {
             color: var(--maroon);
         }
 
@@ -338,31 +358,65 @@
                 <label>Select Service(s) Required <span style="font-weight: 300; color: var(--text-muted);">(Choose as many as needed)</span></label>
                 
                 <div class="services-grid">
-                    <div class="service-card" onclick="toggleCard(this)">
+                    <div class="service-card" onclick="toggleServiceCard(this)">
                         <input type="checkbox" name="services[]" value="Commercial & Event Cinematography">
                         <div class="service-title">Cinematography & Coverage</div>
                         <div class="service-desc">Multi-camera live event broadcasts, commercial shoots, and cinematic storytelling.</div>
                     </div>
 
-                    <div class="service-card" onclick="toggleCard(this)">
+                    <div class="service-card" onclick="toggleServiceCard(this)">
                         <input type="checkbox" name="services[]" value="Sound Production & Mixing">
                         <div class="service-title">Sound Production & Mixing</div>
                         <div class="service-desc">Professional multi-track audio engineering, precise mixing, mastering, and live sound design.</div>
                     </div>
 
-                    <div class="service-card" onclick="toggleCard(this)">
+                    <div class="service-card" onclick="toggleServiceCard(this)">
                         <input type="checkbox" name="services[]" value="Brand Design & Flyers">
                         <div class="service-title">Brand Design & Flyers</div>
                         <div class="service-desc">Striking promotional flyers, visual identity packages, and creative graphic design assets.</div>
                     </div>
 
-                    <div class="service-card" onclick="toggleCard(this)">
+                    <div class="service-card" onclick="toggleServiceCard(this)">
                         <input type="checkbox" name="services[]" value="Portraits, Birthdays & Pre-Wedding Shoots">
                         <div class="service-title">Portraits, Birthdays & Pre-Wedding</div>
                         <div class="service-desc">Editorial photo sessions capturing your milestone memories and intimate celebrations.</div>
                     </div>
                 </div>
                 <div class="error-message" id="service-error" style="margin-top: 8px;">Please select at least one service</div>
+            </div>
+
+            <!-- Location & Venue Section -->
+            <div class="form-group">
+                <label>Shoot Location & Venue Preference</label>
+                
+                <div class="venue-grid" style="margin-bottom: 16px;">
+                    <div class="venue-card selected" onclick="selectVenue(this, 'Wine & Press Studio')">
+                        <input type="radio" name="venue_preference" value="Wine & Press Studio" checked>
+                        <div class="venue-title">Wine & Press Studio</div>
+                        <div class="venue-desc">Our professional creative space</div>
+                    </div>
+
+                    <div class="venue-card" onclick="selectVenue(this, 'Client Location / On-Site')">
+                        <input type="radio" name="venue_preference" value="Client Location / On-Site">
+                        <div class="venue-title">On-Site / Office</div>
+                        <div class="venue-desc">We come to your venue</div>
+                    </div>
+
+                    <div class="venue-card" onclick="selectVenue(this, 'Outdoor / External Location')">
+                        <input type="radio" name="venue_preference" value="Outdoor / External Location">
+                        <div class="venue-title">Outdoor / External</div>
+                        <div class="venue-desc">Parks, streets, or scenic spots</div>
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div>
+                        <input type="text" id="shoot_state" name="shoot_state" placeholder="State (e.g. Kaduna, Abuja)">
+                    </div>
+                    <div>
+                        <input type="text" id="shoot_city" name="shoot_city" placeholder="City / Area">
+                    </div>
+                </div>
             </div>
 
             <div class="form-group" id="group-date">
@@ -373,7 +427,7 @@
 
             <div class="form-group" id="group-details">
                 <label for="project_details">Tell us about your vision *</label>
-                <textarea id="project_details" name="project_details" placeholder="Share locations, concepts, goals, or any specific requirements for your production..."></textarea>
+                <textarea id="project_details" name="project_details" placeholder="Share specific venue addresses, concepts, goals, or any specific requirements..."></textarea>
                 <div class="error-message">Please provide some details about your project</div>
             </div>
 
@@ -388,7 +442,7 @@
     </div>
 
     <script>
-        function toggleCard(cardElement) {
+        function toggleServiceCard(cardElement) {
             const checkbox = cardElement.querySelector('input[type="checkbox"]');
             
             if (event.target === checkbox) {
@@ -411,6 +465,18 @@
             if (serviceError.classList.contains('has-error')) {
                 serviceError.classList.remove('has-error');
             }
+        }
+
+        function selectVenue(cardElement, value) {
+            // Remove selected class and radio check from all venue cards
+            document.querySelectorAll('.venue-card').forEach(card => {
+                card.classList.remove('selected');
+                card.querySelector('input[type="radio"]').checked = false;
+            });
+
+            // Select clicked card
+            cardElement.classList.add('selected');
+            cardElement.querySelector('input[type="radio"]').checked = true;
         }
 
         const form = document.getElementById('inquiryForm');
@@ -480,7 +546,7 @@
                     form.style.display = 'none';
                     document.getElementById('successOverlay').style.display = 'block';
 
-                    // Trigger Confetti Burst matching brand colors (Maroon, Gold, White)
+                    // Trigger Confetti Burst
                     confetti({
                         particleCount: 100,
                         spread: 70,
