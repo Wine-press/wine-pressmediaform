@@ -8,6 +8,9 @@
     <link rel="icon" type="image/png" href="Asset-2-1.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <style>
         /* Default Light Theme Variables */
         :root {
@@ -20,7 +23,7 @@
             --maroon-light: rgba(128, 0, 0, 0.05);
             --border-color: #e2e8f0;
             --input-bg: #ffffff;
-            --logo-filter: brightness(0); /* Turns white logo black for light mode */
+            --logo-filter: brightness(0);
             --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -36,7 +39,7 @@
                 --maroon-light: rgba(168, 50, 50, 0.12);
                 --border-color: #262626;
                 --input-bg: #1f1f1f;
-                --logo-filter: none; /* Keeps original white logo for dark mode */
+                --logo-filter: none;
             }
         }
 
@@ -476,6 +479,15 @@
                     document.getElementById('formHeader').style.display = 'none';
                     form.style.display = 'none';
                     document.getElementById('successOverlay').style.display = 'block';
+
+                    // Trigger Confetti Burst matching brand colors (Maroon, Gold, White)
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#800000', '#d4af37', '#ffffff']
+                    });
+
                 } else {
                     alert('There was a problem submitting your form. Please try again.');
                     submitBtn.textContent = 'Send Inquiry';
