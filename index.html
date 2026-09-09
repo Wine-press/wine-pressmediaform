@@ -25,7 +25,7 @@
             --border-focus: #800000;
             --input-bg: rgba(255, 255, 255, 0.95);
             --glow-color: rgba(128, 0, 0, 0.18);
-            --logo-filter: brightness(0); /* Turns white logo elements black for light mode */
+            --logo-filter: brightness(0);
             --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -43,7 +43,7 @@
                 --border-focus: #d13636;
                 --input-bg: rgba(28, 22, 22, 0.85);
                 --glow-color: rgba(209, 54, 54, 0.3);
-                --logo-filter: none; /* Keeps original white logo elements for dark mode */
+                --logo-filter: none;
             }
         }
 
@@ -69,14 +69,12 @@
             transition: color 0.3s ease;
         }
 
-        /* Fluid background gradient animation */
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* Living Ambient Glowing Orbs */
         body::before {
             content: '';
             position: absolute;
@@ -125,6 +123,7 @@
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
             position: relative;
             z-index: 1;
+            overflow: hidden;
             animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             transition: background 0.4s ease, border-color 0.4s ease;
         }
@@ -132,6 +131,57 @@
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cinematic Loading Ticker Bar at Top */
+        .cinematic-ticker {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: transparent;
+            overflow: hidden;
+            display: none;
+        }
+
+        .cinematic-ticker.active {
+            display: block;
+        }
+
+        .ticker-progress {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--maroon), #ffd700, var(--maroon), transparent);
+            background-size: 200% 100%;
+            animation: tickerSlide 1.5s linear infinite;
+        }
+
+        @keyframes tickerSlide {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Cinematic Ticker Text Status */
+        .ticker-status {
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--maroon);
+            margin-bottom: 20px;
+            min-height: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .ticker-status.active {
+            opacity: 1;
+            animation: pulseText 1.2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulseText {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
         }
 
         .header {
@@ -152,7 +202,6 @@
             transform: scale(1.05);
         }
 
-        /* Living animated text gradient for the header title */
         .header h1 {
             font-size: 30px;
             font-weight: 700;
@@ -230,7 +279,6 @@
             min-height: 120px;
         }
 
-        /* Services & Venue Grids */
         .services-grid, .venue-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -387,6 +435,12 @@
 <body>
 
     <div class="container">
+        <!-- Cinematic Ticker Elements -->
+        <div class="cinematic-ticker" id="cinematicTicker">
+            <div class="ticker-progress"></div>
+        </div>
+        <div class="ticker-status" id="tickerStatus">Initializing transmission...</div>
+
         <div class="header" id="formHeader">
             <img src="Asset-2-1.png" alt="Wine & Press Media Logo" class="logo">
             <h1>Let's Create Together</h1>
@@ -532,6 +586,8 @@
 
         const form = document.getElementById('inquiryForm');
         const submitBtn = document.getElementById('submitBtn');
+        const ticker = document.getElementById('cinematicTicker');
+        const tickerStatus = document.getElementById('tickerStatus');
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -580,8 +636,28 @@
 
             if (!isValid) return;
 
-            submitBtn.textContent = 'Sending Inquiry...';
+            // Activate Cinematic Ticker Animation States
+            submitBtn.textContent = 'Transmitting...';
             submitBtn.disabled = true;
+            ticker.classList.add('active');
+            tickerStatus.classList.add('active');
+
+            // Cycle cinematic ticker text statuses
+            const statuses = [
+                "Validating production specs...",
+                "Encoding project metadata...",
+                "Securing connection to Wine & Press...",
+                "Finalizing transmission..."
+            ];
+            let statusIdx = 0;
+            tickerStatus.textContent = statuses[0];
+
+            const statusInterval = setInterval(() => {
+                statusIdx++;
+                if (statusIdx < statuses.length) {
+                    tickerStatus.textContent = statuses[statusIdx];
+                }
+            }, 600);
 
             const formData = new FormData(form);
 
@@ -592,24 +668,36 @@
                     'Accept': 'application/json'
                 }
             }).then(response => {
+                clearInterval(statusInterval);
                 if (response.ok) {
-                    document.getElementById('formHeader').style.display = 'none';
-                    form.style.display = 'none';
-                    document.getElementById('successOverlay').style.display = 'block';
+                    tickerStatus.textContent = "Transmission successful!";
+                    setTimeout(() => {
+                        ticker.classList.remove('active');
+                        tickerStatus.classList.remove('active');
+                        document.getElementById('formHeader').style.display = 'none';
+                        form.style.display = 'none';
+                        document.getElementById('successOverlay').style.display = 'block';
 
-                    confetti({
-                        particleCount: 100,
-                        spread: 70,
-                        origin: { y: 0.6 },
-                        colors: ['#800000', '#d4af37', '#ffffff']
-                    });
+                        confetti({
+                            particleCount: 120,
+                            spread: 80,
+                            origin: { y: 0.6 },
+                            colors: ['#800000', '#d4af37', '#ffffff']
+                        });
+                    }, 500);
 
                 } else {
+                    clearInterval(statusInterval);
+                    ticker.classList.remove('active');
+                    tickerStatus.classList.remove('active');
                     alert('There was a problem submitting your form. Please try again.');
                     submitBtn.textContent = 'Send Inquiry';
                     submitBtn.disabled = false;
                 }
             }).catch(error => {
+                clearInterval(statusInterval);
+                ticker.classList.remove('active');
+                tickerStatus.classList.remove('active');
                 alert('Connection error. Please check your network and try again.');
                 submitBtn.textContent = 'Send Inquiry';
                 submitBtn.disabled = false;
