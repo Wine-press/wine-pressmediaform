@@ -278,22 +278,17 @@
             min-height: 120px;
         }
 
-        /* Services & Venue Grids */
-        .services-grid, .venue-grid {
+        /* Services Grid */
+        .services-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 14px;
         }
 
-        .venue-grid {
-            grid-template-columns: 1fr 1fr 1fr;
-        }
-
         @media(max-width: 600px) {
-            .services-grid, .venue-grid { grid-template-columns: 1fr; }
+            .services-grid { grid-template-columns: 1fr; }
         }
 
-        /* Interactive Service Card with Touch Feedback */
         .service-card {
             position: relative;
             background: var(--input-bg);
@@ -314,13 +309,12 @@
             box-shadow: 0 10px 25px var(--glow-color);
         }
 
-        /* Spring-scale active touch press effect */
         .service-card:active {
             transform: scale(0.96) translateY(0);
         }
 
         .service-card input[type="checkbox"] {
-            display: none; /* Hide standard checkbox, replaced by custom visual state */
+            display: none;
         }
 
         .service-icon-wrap {
@@ -360,7 +354,6 @@
             line-height: 1.4;
         }
 
-        /* Selected State for Services with Smooth Spring Animation */
         .service-card.selected {
             background: var(--maroon-light);
             border-color: var(--maroon);
@@ -384,56 +377,100 @@
             color: var(--maroon);
         }
 
-        /* Venue Cards */
-        .venue-card {
-            position: relative;
+        /* UNIQUE DISPATCH TERMINAL LOCATION SELECTOR */
+        .dispatch-terminal {
             background: var(--input-bg);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 16px 12px;
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .dispatch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .dispatch-radar-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--maroon);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px var(--maroon);
+            animation: radarPulse 1.5s infinite;
+        }
+
+        @keyframes radarPulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(209, 54, 54, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(209, 54, 54, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(209, 54, 54, 0); }
+        }
+
+        .venue-pill-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        @media(max-width: 600px) {
+            .venue-pill-group { grid-template-columns: 1fr; }
+        }
+
+        .venue-pill {
+            position: relative;
+            padding: 14px 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            text-align: center;
             cursor: pointer;
             transition: var(--transition);
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: center;
+            gap: 4px;
         }
 
-        .venue-card:hover {
+        .venue-pill:hover {
             border-color: var(--maroon);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px var(--glow-color);
+            transform: translateY(-2px);
         }
 
-        .venue-card input[type="radio"] {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            accent-color: var(--maroon);
-            cursor: pointer;
+        .venue-pill input[type="radio"] {
+            display: none;
         }
 
-        .venue-title {
-            font-size: 15px;
+        .venue-pill-icon {
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+
+        .venue-pill-title {
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-main);
-            margin-bottom: 6px;
-            transition: color 0.3s ease;
         }
 
-        .venue-desc {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
-
-        .venue-card.selected {
+        .venue-pill.active {
             background: var(--maroon-light);
             border-color: var(--maroon);
-            box-shadow: 0 10px 30px var(--glow-color);
+            box-shadow: 0 6px 20px var(--glow-color);
         }
 
-        .venue-card.selected .venue-title {
+        .venue-pill.active .venue-pill-title {
             color: var(--maroon);
         }
 
@@ -584,35 +621,43 @@
                 <div class="error-message" id="service-error" style="margin-top: 8px;">Please select at least one service</div>
             </div>
 
+            <!-- UNIQUE DISPATCH TERMINAL LOCATION SELECTOR -->
             <div class="form-group">
-                <label>Shoot Location & Venue Preference</label>
+                <label>Production Dispatch Location</label>
                 
-                <div class="venue-grid" style="margin-bottom: 16px;">
-                    <div class="venue-card selected" onclick="selectVenue(this, 'Wine & Press Studio')">
-                        <input type="radio" name="venue_preference" value="Wine & Press Studio" checked>
-                        <div class="venue-title">Wine & Press Studio</div>
-                        <div class="venue-desc">Our professional creative space</div>
+                <div class="dispatch-terminal">
+                    <div class="dispatch-header">
+                        <span><span class="dispatch-radar-dot"></span> Select Venue Setup</span>
+                        <span id="activeVenueLabel" style="color: var(--maroon);">Studio Facility</span>
                     </div>
 
-                    <div class="venue-card" onclick="selectVenue(this, 'Client Location / On-Site')">
-                        <input type="radio" name="venue_preference" value="Client Location / On-Site">
-                        <div class="venue-title">On-Site / Office</div>
-                        <div class="venue-desc">We come to your venue</div>
+                    <div class="venue-pill-group">
+                        <div class="venue-pill active" onclick="selectVenuePill(this, 'Wine & Press Studio')">
+                            <input type="radio" name="venue_preference" value="Wine & Press Studio" checked>
+                            <span class="venue-pill-icon">🏛️</span>
+                            <span class="venue-pill-title">W&P Studio</span>
+                        </div>
+
+                        <div class="venue-pill" onclick="selectVenuePill(this, 'Client Location / On-Site')">
+                            <input type="radio" name="venue_preference" value="Client Location / On-Site">
+                            <span class="venue-pill-icon">🏢</span>
+                            <span class="venue-pill-title">On-Site / Office</span>
+                        </div>
+
+                        <div class="venue-pill" onclick="selectVenuePill(this, 'Outdoor / External Location')">
+                            <input type="radio" name="venue_preference" value="Outdoor / External Location">
+                            <span class="venue-pill-icon">🌄</span>
+                            <span class="venue-pill-title">Outdoor Location</span>
+                        </div>
                     </div>
 
-                    <div class="venue-card" onclick="selectVenue(this, 'Outdoor / External Location')">
-                        <input type="radio" name="venue_preference" value="Outdoor / External Location">
-                        <div class="venue-title">Outdoor / External</div>
-                        <div class="venue-desc">Parks, streets, or scenic spots</div>
-                    </div>
-                </div>
-
-                <div class="input-row">
-                    <div>
-                        <input type="text" id="shoot_state" name="shoot_state" placeholder="State (e.g. Kaduna, Abuja)">
-                    </div>
-                    <div>
-                        <input type="text" id="shoot_city" name="shoot_city" placeholder="City / Area">
+                    <div class="input-row">
+                        <div>
+                            <input type="text" id="shoot_state" name="shoot_state" placeholder="State (e.g. Kaduna, Abuja)">
+                        </div>
+                        <div>
+                            <input type="text" id="shoot_city" name="shoot_city" placeholder="City / Area">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -656,14 +701,22 @@
             }
         }
 
-        function selectVenue(cardElement, value) {
-            document.querySelectorAll('.venue-card').forEach(card => {
-                card.classList.remove('selected');
-                card.querySelector('input[type="radio"]').checked = false;
+        function selectVenuePill(pillElement, value) {
+            document.querySelectorAll('.venue-pill').forEach(pill => {
+                pill.classList.remove('active');
+                pill.querySelector('input[type="radio"]').checked = false;
             });
 
-            cardElement.classList.add('selected');
-            cardElement.querySelector('input[type="radio"]').checked = true;
+            pillElement.classList.add('active');
+            pillElement.querySelector('input[type="radio"]').checked = true;
+            
+            // Update terminal live label
+            const labelMap = {
+                'Wine & Press Studio': 'Studio Facility',
+                'Client Location / On-Site': 'On-Site Dispatch',
+                'Outdoor / External Location': 'External / Field Shoot'
+            };
+            document.getElementById('activeVenueLabel').textContent = labelMap[value] || 'Active Setup';
         }
 
         const form = document.getElementById('inquiryForm');
