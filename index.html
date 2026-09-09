@@ -162,7 +162,6 @@
             100% { background-position: -200% 0; }
         }
 
-        /* Cinematic Ticker Text Status */
         .ticker-status {
             text-align: center;
             font-size: 13px;
@@ -279,6 +278,7 @@
             min-height: 120px;
         }
 
+        /* Services & Venue Grids */
         .services-grid, .venue-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -293,39 +293,116 @@
             .services-grid, .venue-grid { grid-template-columns: 1fr; }
         }
 
-        .service-card, .venue-card {
+        /* Interactive Service Card with Touch Feedback */
+        .service-card {
             position: relative;
             background: var(--input-bg);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 18px;
+            padding: 20px;
             cursor: pointer;
-            transition: var(--transition);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
+            user-select: none;
         }
 
-        .venue-card {
-            align-items: center;
-            text-align: center;
-            padding: 16px 12px;
-        }
-
-        .service-card:hover, .venue-card:hover {
+        .service-card:hover {
             border-color: var(--maroon);
             transform: translateY(-3px);
             box-shadow: 0 10px 25px var(--glow-color);
         }
 
+        /* Spring-scale active touch press effect */
+        .service-card:active {
+            transform: scale(0.96) translateY(0);
+        }
+
         .service-card input[type="checkbox"] {
-            position: absolute;
-            top: 18px;
-            right: 18px;
-            accent-color: var(--maroon);
-            width: 18px;
-            height: 18px;
+            display: none; /* Hide standard checkbox, replaced by custom visual state */
+        }
+
+        .service-icon-wrap {
+            width: 38px;
+            height: 38px;
+            background: var(--maroon-light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            color: var(--maroon);
+            transition: var(--transition);
+        }
+
+        .service-card svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .service-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            transition: color 0.3s ease;
+        }
+
+        .service-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Selected State for Services with Smooth Spring Animation */
+        .service-card.selected {
+            background: var(--maroon-light);
+            border-color: var(--maroon);
+            box-shadow: 0 10px 30px var(--glow-color);
+            animation: cardSelectPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes cardSelectPop {
+            0% { transform: scale(0.96); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        .service-card.selected .service-icon-wrap {
+            background: var(--maroon);
+            color: #ffffff;
+            box-shadow: 0 4px 12px var(--glow-color);
+        }
+
+        .service-card.selected .service-title {
+            color: var(--maroon);
+        }
+
+        /* Venue Cards */
+        .venue-card {
+            position: relative;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px 12px;
             cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .venue-card:hover {
+            border-color: var(--maroon);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px var(--glow-color);
         }
 
         .venue-card input[type="radio"] {
@@ -336,7 +413,7 @@
             cursor: pointer;
         }
 
-        .service-title, .venue-title {
+        .venue-title {
             font-size: 15px;
             font-weight: 600;
             color: var(--text-main);
@@ -344,21 +421,19 @@
             transition: color 0.3s ease;
         }
 
-        .service-title { padding-right: 24px; }
-
-        .service-desc, .venue-desc {
+        .venue-desc {
             font-size: 13px;
             color: var(--text-muted);
             line-height: 1.4;
         }
 
-        .service-card.selected, .venue-card.selected {
+        .venue-card.selected {
             background: var(--maroon-light);
             border-color: var(--maroon);
             box-shadow: 0 10px 30px var(--glow-color);
         }
 
-        .service-card.selected .service-title, .venue-card.selected .venue-title {
+        .venue-card.selected .venue-title {
             color: var(--maroon);
         }
 
@@ -466,26 +541,42 @@
                 <label>Select Service(s) Required <span style="font-weight: 300; color: var(--text-muted);">(Choose as many as needed)</span></label>
                 
                 <div class="services-grid">
+                    <!-- Service 1: Cinematography -->
                     <div class="service-card" onclick="toggleServiceCard(this)">
                         <input type="checkbox" name="services[]" value="Commercial & Event Cinematography">
+                        <div class="service-icon-wrap">
+                            <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                        </div>
                         <div class="service-title">Cinematography & Coverage</div>
                         <div class="service-desc">Multi-camera live event broadcasts, commercial shoots, and cinematic storytelling.</div>
                     </div>
 
+                    <!-- Service 2: Sound Production -->
                     <div class="service-card" onclick="toggleServiceCard(this)">
                         <input type="checkbox" name="services[]" value="Sound Production & Mixing">
+                        <div class="service-icon-wrap">
+                            <svg viewBox="0 0 24 24"><path d="M18 8v8M12 4v16M6 10v4"></path></svg>
+                        </div>
                         <div class="service-title">Sound Production & Mixing</div>
                         <div class="service-desc">Professional multi-track audio engineering, precise mixing, mastering, and live sound design.</div>
                     </div>
 
+                    <!-- Service 3: Brand Design -->
                     <div class="service-card" onclick="toggleServiceCard(this)">
                         <input type="checkbox" name="services[]" value="Brand Design & Flyers">
+                        <div class="service-icon-wrap">
+                            <svg viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
+                        </div>
                         <div class="service-title">Brand Design & Flyers</div>
                         <div class="service-desc">Striking promotional flyers, visual identity packages, and creative graphic design assets.</div>
                     </div>
 
+                    <!-- Service 4: Portraits & Shoots -->
                     <div class="service-card" onclick="toggleServiceCard(this)">
                         <input type="checkbox" name="services[]" value="Portraits, Birthdays & Pre-Wedding Shoots">
+                        <div class="service-icon-wrap">
+                            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                        </div>
                         <div class="service-title">Portraits, Birthdays & Pre-Wedding</div>
                         <div class="service-desc">Editorial photo sessions capturing your milestone memories and intimate celebrations.</div>
                     </div>
@@ -552,15 +643,6 @@
         function toggleServiceCard(cardElement) {
             const checkbox = cardElement.querySelector('input[type="checkbox"]');
             
-            if (event.target === checkbox) {
-                if (checkbox.checked) {
-                    cardElement.classList.add('selected');
-                } else {
-                    cardElement.classList.remove('selected');
-                }
-                return;
-            }
-
             checkbox.checked = !checkbox.checked;
             if (checkbox.checked) {
                 cardElement.classList.add('selected');
@@ -642,7 +724,6 @@
             ticker.classList.add('active');
             tickerStatus.classList.add('active');
 
-            // Cycle cinematic ticker text statuses
             const statuses = [
                 "Validating production specs...",
                 "Encoding project metadata...",
