@@ -12,34 +12,36 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* Default Light Theme Variables */
+        /* Light Theme Dynamic Variables & Gradients */
         :root {
-            --bg-color: #f7f8fa;
-            --card-bg: #ffffff;
+            --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
             --text-main: #1a1a1a;
-            --text-muted: #555555;
+            --text-muted: #666666;
             --maroon: #800000;
-            --maroon-dark: #660000;
-            --maroon-light: rgba(128, 0, 0, 0.05);
-            --border-color: #e2e8f0;
-            --input-bg: #ffffff;
-            --logo-filter: brightness(0);
+            --maroon-dark: #590000;
+            --maroon-light: rgba(128, 0, 0, 0.08);
+            --border-color: rgba(128, 0, 0, 0.12);
+            --border-focus: #800000;
+            --input-bg: rgba(255, 255, 255, 0.9);
+            --glow-color: rgba(128, 0, 0, 0.15);
             --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Automatically adapt if the phone/device is set to Dark Mode */
+        /* Dark Theme Dynamic Variables & Gradients */
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg-color: #0d0d0d;
-                --card-bg: #161616;
+                --bg-gradient: linear-gradient(135deg, #0f0c0b 0%, #1a1111 50%, #0d0d0d 100%);
+                --card-bg: rgba(22, 18, 18, 0.75);
                 --text-main: #f3f4f6;
                 --text-muted: #9ca3af;
-                --maroon: #a83232;
-                --maroon-dark: #8c2525;
-                --maroon-light: rgba(168, 50, 50, 0.12);
-                --border-color: #262626;
-                --input-bg: #1f1f1f;
-                --logo-filter: none;
+                --maroon: #c23b3b;
+                --maroon-dark: #a32a2a;
+                --maroon-light: rgba(194, 59, 59, 0.15);
+                --border-color: rgba(194, 59, 59, 0.2);
+                --border-focus: #c23b3b;
+                --input-bg: rgba(30, 24, 24, 0.8);
+                --glow-color: rgba(194, 59, 59, 0.25);
             }
         }
 
@@ -51,7 +53,7 @@
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-color);
+            background: var(--bg-gradient);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
@@ -60,39 +62,60 @@
             padding: 40px 20px;
             position: relative;
             overflow-x: hidden;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background 0.5s ease, color 0.3s ease;
         }
 
+        /* Ambient Glowing Background Orbs */
         body::before {
             content: '';
             position: absolute;
-            top: -10%;
+            top: -15%;
             left: -10%;
-            width: 60vw;
-            height: 60vw;
-            background: radial-gradient(circle, var(--maroon-light) 0%, rgba(255, 255, 255, 0) 70%);
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, var(--glow-color) 0%, rgba(0, 0, 0, 0) 70%);
             z-index: 0;
-            animation: floatGlow 12s ease-in-out infinite alternate;
+            animation: floatGlow1 14s ease-in-out infinite alternate;
             pointer-events: none;
         }
 
-        @keyframes floatGlow {
-            0% { transform: translateY(0px) scale(1); }
-            100% { transform: translateY(-30px) scale(1.05); }
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -15%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, var(--glow-color) 0%, rgba(0, 0, 0, 0) 70%);
+            z-index: 0;
+            animation: floatGlow2 16s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes floatGlow1 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, 30px) scale(1.1); }
+        }
+
+        @keyframes floatGlow2 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-40px, -30px) scale(1.15); }
         }
 
         .container {
             width: 100%;
             max-width: 680px;
             background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border-color);
-            border-radius: 24px;
+            border-radius: 28px;
             padding: 48px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
             position: relative;
             z-index: 1;
             animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
+            transition: background 0.4s ease, border-color 0.4s ease;
         }
 
         @keyframes slideUp {
@@ -106,19 +129,27 @@
         }
 
         .logo {
-            max-width: 130px;
+            max-width: 140px;
             height: auto;
             margin-bottom: 20px;
-            filter: var(--logo-filter);
-            transition: filter 0.3s ease;
+            /* Keeps logo colors vibrant without turning black/white */
+            filter: drop-shadow(0 4px 12px rgba(128, 0, 0, 0.15));
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.03);
         }
 
         .header h1 {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 700;
             color: var(--text-main);
             letter-spacing: -0.5px;
             margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--text-main) 60%, var(--maroon));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .header p {
@@ -158,7 +189,7 @@
             padding: 14px 18px;
             background: var(--input-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 14px;
             font-family: inherit;
             font-size: 15px;
             color: var(--text-main);
@@ -167,13 +198,13 @@
 
         input::placeholder, textarea::placeholder {
             color: var(--text-muted);
-            opacity: 0.6;
+            opacity: 0.5;
         }
 
         input:focus, textarea:focus {
             outline: none;
-            border-color: var(--maroon);
-            box-shadow: 0 0 0 4px var(--maroon-light);
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 4px var(--maroon-light), 0 4px 12px var(--glow-color);
         }
 
         textarea {
@@ -181,7 +212,7 @@
             min-height: 120px;
         }
 
-        /* Services Grid & Venue Grid */
+        /* Services & Venue Grids */
         .services-grid, .venue-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -200,7 +231,7 @@
             position: relative;
             background: var(--input-bg);
             border: 1px solid var(--border-color);
-            border-radius: 14px;
+            border-radius: 16px;
             padding: 18px;
             cursor: pointer;
             transition: var(--transition);
@@ -217,7 +248,8 @@
 
         .service-card:hover, .venue-card:hover {
             border-color: var(--maroon);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px var(--glow-color);
         }
 
         .service-card input[type="checkbox"] {
@@ -256,6 +288,7 @@
         .service-card.selected, .venue-card.selected {
             background: var(--maroon-light);
             border-color: var(--maroon);
+            box-shadow: 0 8px 25px var(--glow-color);
         }
 
         .service-card.selected .service-title, .venue-card.selected .venue-title {
@@ -265,21 +298,22 @@
         .submit-btn {
             width: 100%;
             padding: 16px;
-            background-color: var(--maroon);
+            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
             color: white;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             font-family: inherit;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: 0 4px 14px rgba(128, 0, 0, 0.25);
+            box-shadow: 0 6px 20px var(--glow-color);
         }
 
         .submit-btn:hover {
-            background-color: var(--maroon-dark);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--glow-color);
+            filter: brightness(1.1);
         }
 
         .error-message {
@@ -315,6 +349,7 @@
             justify-content: center;
             font-size: 32px;
             margin: 0 auto 24px auto;
+            box-shadow: 0 0 20px var(--glow-color);
         }
 
         .success-overlay h2 {
@@ -385,7 +420,6 @@
                 <div class="error-message" id="service-error" style="margin-top: 8px;">Please select at least one service</div>
             </div>
 
-            <!-- Location & Venue Section -->
             <div class="form-group">
                 <label>Shoot Location & Venue Preference</label>
                 
@@ -468,13 +502,11 @@
         }
 
         function selectVenue(cardElement, value) {
-            // Remove selected class and radio check from all venue cards
             document.querySelectorAll('.venue-card').forEach(card => {
                 card.classList.remove('selected');
                 card.querySelector('input[type="radio"]').checked = false;
             });
 
-            // Select clicked card
             cardElement.classList.add('selected');
             cardElement.querySelector('input[type="radio"]').checked = true;
         }
@@ -546,7 +578,6 @@
                     form.style.display = 'none';
                     document.getElementById('successOverlay').style.display = 'block';
 
-                    // Trigger Confetti Burst
                     confetti({
                         particleCount: 100,
                         spread: 70,
