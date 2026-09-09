@@ -11,56 +11,89 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0f1115;
-            background-image: radial-gradient(circle at 50% 0%, #2a1625 0%, #0f1115 60%);
+            background-color: #050505;
+            color: #e5e7eb;
+            overflow-x: hidden;
+        }
+
+        /* Animated Gradient Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(120deg, #0f1115, #2a0815, #120914, #0f1115);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            z-index: -2;
+        }
+        
+        .bg-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            height: 80vh;
+            background: radial-gradient(circle, rgba(225,29,72,0.1) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Entrance Animations */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         /* Custom scrollbar for textarea */
-        textarea::-webkit-scrollbar {
-            width: 8px;
-        }
-        textarea::-webkit-scrollbar-track {
-            background: rgba(31, 41, 55, 0.5);
-            border-radius: 4px;
-        }
-        textarea::-webkit-scrollbar-thumb {
-            background: rgba(75, 85, 99, 0.8);
-            border-radius: 4px;
-        }
-        textarea::-webkit-scrollbar-thumb:hover {
-            background: rgba(107, 114, 128, 1);
-        }
+        textarea::-webkit-scrollbar { width: 8px; }
+        textarea::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 4px; }
+        textarea::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
+        textarea::-webkit-scrollbar-thumb:hover { background: rgba(225, 29, 72, 0.5); }
 
         /* Input autofill dark mode fix */
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover, 
-        input:-webkit-autofill:focus, 
-        input:-webkit-autofill:active{
-            -webkit-box-shadow: 0 0 0 30px #1f2937 inset !important;
+        input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #111318 inset !important;
             -webkit-text-fill-color: white !important;
             transition: background-color 5000s ease-in-out 0s;
         }
 
-        /* Checkmark animation for success state */
+        /* Success Checkmark Animation */
         .checkmark__circle {
             stroke-dasharray: 166;
             stroke-dashoffset: 166;
             stroke-width: 2;
             stroke-miterlimit: 10;
-            stroke: #10b981;
+            stroke: #e11d48; /* Rose-600 */
             fill: none;
             animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
         }
         .checkmark {
-            width: 56px;
-            height: 56px;
+            width: 72px;
+            height: 72px;
             border-radius: 50%;
             display: block;
             stroke-width: 2;
             stroke: #fff;
             stroke-miterlimit: 10;
-            margin: 10% auto;
-            box-shadow: inset 0px 0px 0px #10b981;
+            margin: 0 auto;
+            box-shadow: inset 0px 0px 0px #e11d48;
             animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
         }
         .checkmark__check {
@@ -70,182 +103,160 @@
             animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
         }
 
-        @keyframes stroke {
-            100% { stroke-dashoffset: 0; }
-        }
-        @keyframes scale {
-            0%, 100% { transform: none; }
-            50% { transform: scale3d(1.1, 1.1, 1); }
-        }
-        @keyframes fill {
-            100% { box-shadow: inset 0px 0px 0px 30px #10b981; }
-        }
+        @keyframes stroke { 100% { stroke-dashoffset: 0; } }
+        @keyframes scale { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
+        @keyframes fill { 100% { box-shadow: inset 0px 0px 0px 50px #e11d48; } }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 sm:p-8 text-gray-200 selection:bg-rose-500 selection:text-white">
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-8 selection:bg-rose-500 selection:text-white">
 
-    <!-- Form Container -->
-    <main class="w-full max-w-3xl bg-gray-900/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-800 p-6 sm:p-10 md:p-12 relative overflow-hidden">
+    <div class="animated-bg"></div>
+    <div class="bg-glow"></div>
+
+    <main class="w-full max-w-4xl bg-[#0a0a0c]/60 backdrop-blur-2xl rounded-[2rem] shadow-2xl border border-white/10 p-6 sm:p-10 md:p-14 relative overflow-hidden fade-in-up">
         
-        <!-- Subtle decorative glow -->
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-rose-900/20 blur-[100px] pointer-events-none"></div>
+        <!-- Subtle top highlight for glass effect -->
+        <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
-        <!-- Header -->
-        <div class="text-center mb-10 relative z-10" id="formHeader">
-            <img src="Asset-2-1.png" alt="Wine&Press Media Logo" class="h-20 md:h-28 mx-auto mb-4 object-contain">
-            <p class="text-gray-400 text-sm md:text-base max-w-lg mx-auto">
-                Ready to elevate your next project? Fill out the details below, and our production team will get back to you shortly.
+        <!-- Header (Animated) -->
+        <div class="text-center mb-12 relative z-10 fade-in-up" style="animation-delay: 100ms;" id="formHeader">
+            <img src="Asset-2-1.png" alt="Wine&Press Media" class="h-24 md:h-32 mx-auto mb-6 object-contain drop-shadow-xl">
+            <h1 class="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">Let's Create Something Extraordinary</h1>
+            <p class="text-gray-400 text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+                Fill out the details below. Our production team will review your vision and get back to you with a tailored plan.
             </p>
         </div>
 
         <!-- Form -->
-        <form id="inquiryForm" action="https://formspree.io/f/xaeyadoq" method="POST" class="space-y-6 relative z-10" novalidate>
+        <form id="inquiryForm" action="https://formspree.io/f/xaeyadoq" method="POST" class="space-y-8 relative z-10" novalidate>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in-up" style="animation-delay: 200ms;">
                 <!-- Full Name -->
-                <div class="space-y-2">
-                    <label for="fullName" class="text-sm font-medium text-gray-300 ml-1">Full Name *</label>
+                <div class="space-y-2 group">
+                    <label for="fullName" class="text-sm font-medium text-gray-300 ml-1 transition-colors group-focus-within:text-rose-400">Full Name *</label>
                     <input type="text" id="fullName" name="fullName" required
-                        class="w-full bg-gray-800/80 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all placeholder-gray-500"
-                        placeholder="John Doe">
+                        class="w-full bg-[#111318]/80 border border-white/10 text-white rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all placeholder-gray-600 shadow-inner"
+                        placeholder="e.g. John Doe">
                     <p class="text-red-400 text-xs hidden ml-1" id="fullNameError">Please enter your full name.</p>
                 </div>
 
                 <!-- Email Address -->
-                <div class="space-y-2">
-                    <label for="email" class="text-sm font-medium text-gray-300 ml-1">Email Address *</label>
+                <div class="space-y-2 group">
+                    <label for="email" class="text-sm font-medium text-gray-300 ml-1 transition-colors group-focus-within:text-rose-400">Email Address *</label>
                     <input type="email" id="email" name="email" required
-                        class="w-full bg-gray-800/80 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all placeholder-gray-500"
-                        placeholder="john@example.com">
+                        class="w-full bg-[#111318]/80 border border-white/10 text-white rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all placeholder-gray-600 shadow-inner"
+                        placeholder="e.g. john@example.com">
                     <p class="text-red-400 text-xs hidden ml-1" id="emailError">Please enter a valid email address.</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in-up" style="animation-delay: 300ms;">
                 <!-- Phone Number -->
-                <div class="space-y-2">
-                    <label for="phone" class="text-sm font-medium text-gray-300 ml-1">Phone Number</label>
+                <div class="space-y-2 group">
+                    <label for="phone" class="text-sm font-medium text-gray-300 ml-1 transition-colors group-focus-within:text-rose-400">Phone Number</label>
                     <input type="tel" id="phone" name="phone"
-                        class="w-full bg-gray-800/80 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all placeholder-gray-500"
+                        class="w-full bg-[#111318]/80 border border-white/10 text-white rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all placeholder-gray-600 shadow-inner"
                         placeholder="+1 (555) 000-0000">
                 </div>
 
                 <!-- Project/Event Date -->
-                <div class="space-y-2">
-                    <label for="date" class="text-sm font-medium text-gray-300 ml-1">Date of Production *</label>
+                <div class="space-y-2 group">
+                    <label for="date" class="text-sm font-medium text-gray-300 ml-1 transition-colors group-focus-within:text-rose-400">Project / Event Date *</label>
                     <input type="date" id="date" name="dateOfProduction" required
-                        class="w-full bg-gray-800/80 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all text-gray-300 [color-scheme:dark]">
+                        class="w-full bg-[#111318]/80 border border-white/10 text-white rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all text-gray-300 [color-scheme:dark] shadow-inner">
                     <p class="text-red-400 text-xs hidden ml-1" id="dateError">Please select a date.</p>
                 </div>
             </div>
 
-            <div class="space-y-3">
+            <div class="space-y-4 fade-in-up" style="animation-delay: 400ms;">
                 <label class="text-sm font-medium text-gray-300 ml-1">Services Required (Select all that apply) *</label>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="servicesGrid">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="servicesGrid">
                     
                     <!-- Service 1 -->
-                    <label class="cursor-pointer block relative h-full">
-                        <input type="checkbox" name="services" value="Live Event Broadcasting" class="peer sr-only service-checkbox">
-                        <div class="h-full rounded-xl border border-gray-700 bg-gray-800/60 p-4 transition-all duration-200 hover:border-gray-500 peer-checked:border-rose-500 peer-checked:bg-rose-900/20 peer-checked:shadow-[0_0_15px_rgba(244,63,94,0.15)]">
-                            <span class="block text-sm font-semibold text-white mb-1">Live Event Broadcasting</span>
-                            <span class="block text-xs text-gray-400">Multi-camera live switching and streaming for premium event coverage.</span>
+                    <label class="cursor-pointer block relative h-full group">
+                        <input type="checkbox" name="services" value="Cinematography & Video Production" class="peer sr-only service-checkbox">
+                        <div class="h-full rounded-2xl border border-white/10 bg-[#111318]/60 p-5 transition-all duration-300 hover:border-gray-500 hover:bg-[#1a1d24] peer-checked:border-rose-500 peer-checked:bg-rose-950/30 peer-checked:shadow-[0_0_20px_rgba(225,29,72,0.15)] relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-rose-500/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150 peer-checked:bg-rose-500/20"></div>
+                            <span class="block text-base font-semibold text-white mb-2 relative z-10">Cinematography & Video Production</span>
+                            <span class="block text-sm text-gray-400 leading-relaxed relative z-10">From high-end commercial shoots to multi-camera live event broadcasting. We capture your vision with cinematic precision.</span>
                         </div>
                     </label>
 
                     <!-- Service 2 -->
-                    <label class="cursor-pointer block relative h-full">
-                        <input type="checkbox" name="services" value="Commercial Cinematography" class="peer sr-only service-checkbox">
-                        <div class="h-full rounded-xl border border-gray-700 bg-gray-800/60 p-4 transition-all duration-200 hover:border-gray-500 peer-checked:border-rose-500 peer-checked:bg-rose-900/20 peer-checked:shadow-[0_0_15px_rgba(244,63,94,0.15)]">
-                            <span class="block text-sm font-semibold text-white mb-1">Commercial Cinematography</span>
-                            <span class="block text-xs text-gray-400">High-end video production for brand campaigns and editorial lookbooks.</span>
+                    <label class="cursor-pointer block relative h-full group">
+                        <input type="checkbox" name="services" value="Sound Production & Mixing" class="peer sr-only service-checkbox">
+                        <div class="h-full rounded-2xl border border-white/10 bg-[#111318]/60 p-5 transition-all duration-300 hover:border-gray-500 hover:bg-[#1a1d24] peer-checked:border-rose-500 peer-checked:bg-rose-950/30 peer-checked:shadow-[0_0_20px_rgba(225,29,72,0.15)] relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-rose-500/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150 peer-checked:bg-rose-500/20"></div>
+                            <span class="block text-base font-semibold text-white mb-2 relative z-10">Sound Production & Mixing</span>
+                            <span class="block text-sm text-gray-400 leading-relaxed relative z-10">Professional audio engineering, multi-track mixing, and live sound reinforcement. Crystal clear audio tailored to your project's environment.</span>
                         </div>
                     </label>
 
                     <!-- Service 3 -->
-                    <label class="cursor-pointer block relative h-full">
-                        <input type="checkbox" name="services" value="Documentary Coverage" class="peer sr-only service-checkbox">
-                        <div class="h-full rounded-xl border border-gray-700 bg-gray-800/60 p-4 transition-all duration-200 hover:border-gray-500 peer-checked:border-rose-500 peer-checked:bg-rose-900/20 peer-checked:shadow-[0_0_15px_rgba(244,63,94,0.15)]">
-                            <span class="block text-sm font-semibold text-white mb-1">Documentary Coverage</span>
-                            <span class="block text-xs text-gray-400">Comprehensive photo and video documentation for ceremonies and special events.</span>
+                    <label class="cursor-pointer block relative h-full group">
+                        <input type="checkbox" name="services" value="Photography & Events" class="peer sr-only service-checkbox">
+                        <div class="h-full rounded-2xl border border-white/10 bg-[#111318]/60 p-5 transition-all duration-300 hover:border-gray-500 hover:bg-[#1a1d24] peer-checked:border-rose-500 peer-checked:bg-rose-950/30 peer-checked:shadow-[0_0_20px_rgba(225,29,72,0.15)] relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-rose-500/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150 peer-checked:bg-rose-500/20"></div>
+                            <span class="block text-base font-semibold text-white mb-2 relative z-10">Photography & Events</span>
+                            <span class="block text-sm text-gray-400 leading-relaxed relative z-10">Timeless documentary coverage, pre-wedding, and birthday shoots. We freeze your most important moments in stunning detail.</span>
                         </div>
                     </label>
 
                     <!-- Service 4 -->
-                    <label class="cursor-pointer block relative h-full">
-                        <input type="checkbox" name="services" value="Audio Engineering" class="peer sr-only service-checkbox">
-                        <div class="h-full rounded-xl border border-gray-700 bg-gray-800/60 p-4 transition-all duration-200 hover:border-gray-500 peer-checked:border-rose-500 peer-checked:bg-rose-900/20 peer-checked:shadow-[0_0_15px_rgba(244,63,94,0.15)]">
-                            <span class="block text-sm font-semibold text-white mb-1">Audio Engineering</span>
-                            <span class="block text-xs text-gray-400">Professional live sound reinforcement and multi-track recording.</span>
-                        </div>
-                    </label>
-
-                    <!-- Service 5 -->
-                    <label class="cursor-pointer block relative h-full">
-                        <input type="checkbox" name="services" value="Birthday Shoots" class="peer sr-only service-checkbox">
-                        <div class="h-full rounded-xl border border-gray-700 bg-gray-800/60 p-4 transition-all duration-200 hover:border-gray-500 peer-checked:border-rose-500 peer-checked:bg-rose-900/20 peer-checked:shadow-[0_0_15px_rgba(244,63,94,0.15)]">
-                            <span class="block text-sm font-semibold text-white mb-1">Birthday Shoots</span>
-                            <span class="block text-xs text-gray-400">Personalized, cinematic videography and vibrant photography for your special day.</span>
-                        </div>
-                    </label>
-
-                    <!-- Service 6 -->
-                    <label class="cursor-pointer block relative h-full">
-                        <input type="checkbox" name="services" value="Pre-Wedding" class="peer sr-only service-checkbox">
-                        <div class="h-full rounded-xl border border-gray-700 bg-gray-800/60 p-4 transition-all duration-200 hover:border-gray-500 peer-checked:border-rose-500 peer-checked:bg-rose-900/20 peer-checked:shadow-[0_0_15px_rgba(244,63,94,0.15)]">
-                            <span class="block text-sm font-semibold text-white mb-1">Pre-Wedding</span>
-                            <span class="block text-xs text-gray-400">Beautifully crafted love stories and photo sessions capturing the magic before your big day.</span>
-                        </div>
-                    </label>
-
-                    <!-- Service 7 -->
-                    <label class="cursor-pointer block relative h-full sm:col-span-2 md:col-span-1">
-                        <input type="checkbox" name="services" value="Photoshoots" class="peer sr-only service-checkbox">
-                        <div class="h-full rounded-xl border border-gray-700 bg-gray-800/60 p-4 transition-all duration-200 hover:border-gray-500 peer-checked:border-rose-500 peer-checked:bg-rose-900/20 peer-checked:shadow-[0_0_15px_rgba(244,63,94,0.15)]">
-                            <span class="block text-sm font-semibold text-white mb-1">Photoshoots</span>
-                            <span class="block text-xs text-gray-400">Studio or on-location photography for portraits, fashion, and products.</span>
+                    <label class="cursor-pointer block relative h-full group">
+                        <input type="checkbox" name="services" value="Brand Identity & Design" class="peer sr-only service-checkbox">
+                        <div class="h-full rounded-2xl border border-white/10 bg-[#111318]/60 p-5 transition-all duration-300 hover:border-gray-500 hover:bg-[#1a1d24] peer-checked:border-rose-500 peer-checked:bg-rose-950/30 peer-checked:shadow-[0_0_20px_rgba(225,29,72,0.15)] relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-rose-500/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150 peer-checked:bg-rose-500/20"></div>
+                            <span class="block text-base font-semibold text-white mb-2 relative z-10">Brand Identity & Design</span>
+                            <span class="block text-sm text-gray-400 leading-relaxed relative z-10">Striking visual identities, custom flyers, and brand design. We craft compelling graphics that elevate your presence.</span>
                         </div>
                     </label>
 
                 </div>
-                <p class="text-red-400 text-xs hidden ml-1" id="serviceError">Please select at least one service.</p>
+                <p class="text-red-400 text-xs hidden ml-1" id="serviceError">Please select at least one service to proceed.</p>
             </div>
 
             <!-- Project Details -->
-            <div class="space-y-2">
-                <label for="details" class="text-sm font-medium text-gray-300 ml-1">Additional Project Details/Scope *</label>
+            <div class="space-y-2 group fade-in-up" style="animation-delay: 500ms;">
+                <label for="details" class="text-sm font-medium text-gray-300 ml-1 transition-colors group-focus-within:text-rose-400">Tell us about your vision *</label>
                 <textarea id="details" name="projectDetails" rows="4" required
-                    class="w-full bg-gray-800/80 border border-gray-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all placeholder-gray-500 resize-y"
-                    placeholder="Tell us about your vision, location, expected deliverables, and any specific requirements..."></textarea>
+                    class="w-full bg-[#111318]/80 border border-white/10 text-white rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition-all placeholder-gray-600 resize-y shadow-inner"
+                    placeholder="Location, expected deliverables, specific requirements, or the story you want to tell..."></textarea>
                 <p class="text-red-400 text-xs hidden ml-1" id="detailsError">Please provide some details about your project.</p>
             </div>
 
             <!-- Submit Button -->
-            <button type="submit" id="submitBtn"
-                class="w-full mt-8 bg-gradient-to-r from-rose-700 to-red-900 hover:from-rose-600 hover:to-red-800 text-white font-semibold py-4 rounded-xl shadow-lg shadow-rose-900/30 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 group focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 focus:ring-offset-gray-900">
-                <span id="btnText">Send Inquiry</span>
-                <!-- Loading Spinner (Hidden by default) -->
-                <svg id="btnSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <!-- Send Icon -->
-                <svg id="btnIcon" class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-            </button>
+            <div class="pt-4 fade-in-up" style="animation-delay: 600ms;">
+                <button type="submit" id="submitBtn"
+                    class="w-full bg-gradient-to-r from-rose-600 to-rose-800 hover:from-rose-500 hover:to-rose-700 text-white font-semibold py-4 md:py-5 rounded-xl shadow-[0_0_30px_rgba(225,29,72,0.3)] hover:shadow-[0_0_40px_rgba(225,29,72,0.5)] transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 focus:ring-offset-gray-900">
+                    <span id="btnText" class="tracking-wide text-lg">Send Inquiry</span>
+                    
+                    <!-- Loading Spinner (Hidden by default) -->
+                    <svg id="btnSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    
+                    <!-- Send Arrow Icon -->
+                    <svg id="btnIcon" class="w-5 h-5 group-hover:translate-x-1.5 group-hover:-translate-y-1.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </button>
+            </div>
         </form>
 
         <!-- Success State (Hidden by default) -->
-        <div id="successState" class="hidden flex-col items-center justify-center py-12 text-center relative z-10">
-            <svg class="checkmark mb-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+        <div id="successState" class="hidden flex-col items-center justify-center py-16 text-center relative z-10 fade-in-up">
+            <svg class="checkmark mb-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
                 <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
                 <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
             </svg>
-            <h2 class="text-3xl font-bold text-white mb-2">Request Received</h2>
-            <p class="text-gray-400 max-w-md mx-auto mb-8">
-                Thank you for choosing Wine&Press Media. We've received your inquiry and our team will contact you within 24-48 hours.
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">Vision Received</h2>
+            <p class="text-gray-400 text-lg max-w-md mx-auto mb-10 leading-relaxed">
+                Thank you for choosing Wine&Press Media. Our production team is reviewing your inquiry and will contact you shortly.
             </p>
-            <button onclick="resetForm()" class="text-rose-500 hover:text-rose-400 font-medium transition-colors">
+            <button onclick="resetForm()" class="px-6 py-2 border border-white/10 rounded-full text-gray-300 hover:text-white hover:border-rose-500 hover:bg-rose-500/10 transition-all duration-300">
                 Submit another inquiry
             </button>
         </div>
@@ -261,18 +272,18 @@
         const btnSpinner = document.getElementById('btnSpinner');
         const btnIcon = document.getElementById('btnIcon');
 
-        // Validation helpers
+        // Validation UI Helpers
         const showError = (id) => {
             const el = document.getElementById(id);
-            el.classList.add('border-red-500');
-            el.classList.remove('border-gray-700', 'focus:border-rose-500');
+            el.classList.add('border-red-500', 'bg-red-950/20');
+            el.classList.remove('border-white/10');
             document.getElementById(`${id}Error`).classList.remove('hidden');
         };
 
         const hideError = (id) => {
             const el = document.getElementById(id);
-            el.classList.remove('border-red-500');
-            el.classList.add('border-gray-700', 'focus:border-rose-500');
+            el.classList.remove('border-red-500', 'bg-red-950/20');
+            el.classList.add('border-white/10');
             document.getElementById(`${id}Error`).classList.add('hidden');
         };
 
@@ -281,102 +292,82 @@
             
             // Full Name
             const fullName = document.getElementById('fullName');
-            if (!fullName.value.trim()) {
-                showError('fullName');
-                isValid = false;
-            } else {
-                hideError('fullName');
-            }
+            if (!fullName.value.trim()) { showError('fullName'); isValid = false; } 
+            else { hideError('fullName'); }
 
             // Email
             const email = document.getElementById('email');
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email.value.trim() || !emailRegex.test(email.value)) {
-                showError('email');
-                isValid = false;
-            } else {
-                hideError('email');
-            }
+            if (!email.value.trim() || !emailRegex.test(email.value)) { showError('email'); isValid = false; } 
+            else { hideError('email'); }
 
             // Date
             const date = document.getElementById('date');
-            if (!date.value) {
-                showError('date');
-                isValid = false;
-            } else {
-                hideError('date');
-            }
+            if (!date.value) { showError('date'); isValid = false; } 
+            else { hideError('date'); }
 
-            // Services (Custom Checkbox Grid)
+            // Services Validation
             const serviceCheckboxes = document.querySelectorAll('.service-checkbox');
             const isServiceSelected = Array.from(serviceCheckboxes).some(cb => cb.checked);
             const servicesGrid = document.getElementById('servicesGrid');
             
             if (!isServiceSelected) {
-                servicesGrid.classList.add('ring-2', 'ring-red-500', 'rounded-xl');
+                servicesGrid.classList.add('ring-2', 'ring-red-500', 'rounded-2xl', 'p-2', 'bg-red-950/10');
                 document.getElementById('serviceError').classList.remove('hidden');
                 isValid = false;
             } else {
-                servicesGrid.classList.remove('ring-2', 'ring-red-500', 'rounded-xl');
+                servicesGrid.classList.remove('ring-2', 'ring-red-500', 'rounded-2xl', 'p-2', 'bg-red-950/10');
                 document.getElementById('serviceError').classList.add('hidden');
             }
 
-            // Details
+            // Details Textarea
             const details = document.getElementById('details');
-            if (!details.value.trim()) {
-                showError('details');
-                isValid = false;
-            } else {
-                hideError('details');
-            }
+            if (!details.value.trim()) { showError('details'); isValid = false; } 
+            else { hideError('details'); }
 
             return isValid;
         };
 
-        // Real-time validation clearance on input
-        const inputs = form.querySelectorAll('input, select, textarea');
-        inputs.forEach(input => {
+        // Real-time clearance of errors on user input
+        form.querySelectorAll('input, select, textarea').forEach(input => {
             input.addEventListener('input', () => {
                 if (input.id && document.getElementById(`${input.id}Error`)) {
                     hideError(input.id);
                 }
-                // Clear any submit errors when user types again
-                submitBtn.classList.remove('ring-red-500', 'ring-2');
             });
         });
 
-        const serviceCheckboxes = document.querySelectorAll('.service-checkbox');
-        serviceCheckboxes.forEach(cb => {
+        // Real-time clearance for the Custom Services Grid
+        document.querySelectorAll('.service-checkbox').forEach(cb => {
             cb.addEventListener('change', () => {
-                document.getElementById('servicesGrid').classList.remove('ring-2', 'ring-red-500', 'rounded-xl');
+                const servicesGrid = document.getElementById('servicesGrid');
+                servicesGrid.classList.remove('ring-2', 'ring-red-500', 'rounded-2xl', 'p-2', 'bg-red-950/10');
                 document.getElementById('serviceError').classList.add('hidden');
-                submitBtn.classList.remove('ring-red-500', 'ring-2');
             });
         });
 
+        // Handle Submission
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             if (validateForm()) {
-                // Show loading state
+                // UI transition to Loading State
                 btnText.textContent = 'Sending...';
                 btnSpinner.classList.remove('hidden');
                 btnIcon.classList.add('hidden');
                 submitBtn.disabled = true;
-                submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+                submitBtn.classList.add('opacity-90', 'cursor-wait');
 
                 try {
-                    // Send to Formspree silently in the background
+                    // Background POST to Formspree
                     const response = await fetch(form.action, {
                         method: form.method,
                         body: new FormData(form),
-                        headers: {
-                            'Accept': 'application/json'
-                        }
+                        headers: { 'Accept': 'application/json' }
                     });
                     
                     if (response.ok) {
-                        // Hide form and show success animation
+                        // Smoothly transition to Success State
                         form.classList.add('hidden');
                         formHeader.classList.add('hidden');
                         successState.classList.remove('hidden');
@@ -385,39 +376,50 @@
                         throw new Error('Form submission failed');
                     }
                 } catch (error) {
-                    // Handle errors gracefully without alerts
                     btnText.textContent = 'Error Sending - Try Again';
-                    submitBtn.classList.add('ring-red-500', 'ring-2');
+                    submitBtn.classList.replace('from-rose-600', 'from-red-600');
+                    submitBtn.classList.replace('to-rose-800', 'to-red-800');
                 } finally {
-                    // Reset button visually depending on outcome
                     if (btnText.textContent === 'Error Sending - Try Again') {
                         btnSpinner.classList.add('hidden');
                         btnIcon.classList.remove('hidden');
                         submitBtn.disabled = false;
-                        submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                        submitBtn.classList.remove('opacity-90', 'cursor-wait');
                         
                         setTimeout(() => {
                             btnText.textContent = 'Send Inquiry';
+                            submitBtn.classList.replace('from-red-600', 'from-rose-600');
+                            submitBtn.classList.replace('to-red-800', 'to-rose-800');
                         }, 3000);
-                    } else {
-                        // Success state background reset
-                        btnText.textContent = 'Send Inquiry';
-                        btnSpinner.classList.add('hidden');
-                        btnIcon.classList.remove('hidden');
-                        submitBtn.disabled = false;
-                        submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
                     }
                 }
             }
         });
 
-        // Function to reset the view
+        // Reset the form view for a new submission
         function resetForm() {
             form.reset();
+            
+            // Re-hide success state, show form
             successState.classList.add('hidden');
             successState.classList.remove('flex');
             form.classList.remove('hidden');
             formHeader.classList.remove('hidden');
+            
+            // Reset Submit Button UI
+            btnText.textContent = 'Send Inquiry';
+            btnSpinner.classList.add('hidden');
+            btnIcon.classList.remove('hidden');
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-90', 'cursor-wait');
+            
+            // Reset any active animations by removing and re-adding the class
+            const animatedElements = document.querySelectorAll('.fade-in-up');
+            animatedElements.forEach(el => {
+                el.style.animation = 'none';
+                el.offsetHeight; /* trigger reflow */
+                el.style.animation = null; 
+            });
         }
     </script>
 </body>
